@@ -1,0 +1,22 @@
+{
+    "name": "ppabcd/kyla_ai",
+    "description": "Artificial Intelligence System",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Reza Juliandri",
+            "email": "rezajuliandri20@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+        "psr-0": {
+            "AI\\" : "App/",
+            "Main\\": "App/",
+            "Other\\": "App/",
+            "Connection\\": "App/"
+        }
+    }
+}
