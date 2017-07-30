@@ -1,21 +1,19 @@
 <?php
-use AI\AI;
+use AI\Proses;
+use Other\Helper;
 use Main\Procedural\Error\Error;
-$AI = new AI;
+$Proses = new Proses;
 if(isset($_GET['messages'])){
-  $kalimat = (isset($_GET['messages']))? $_GET['messages'] : Error::messages('Kalimat cannot be blank');
-  $token   = (isset($_GET['token']))? $_GET['token'] : Error::messages('Token cannot be blank');
-  echo $AI::Get('Apa kabar','B0O86WI41U4PPMJchWLgdiODhTTYUFMY');
+  $messages = (isset($_GET['messages']))?$_GET['messages'] : Error::messages('Messages cannot be blank');
+  $token    = (isset($_GET['token']))?$_GET['token']:Error::messages('Token cannot be blank');
+  echo $Proses::chat($messages,$token);
 }
-if(isset($_GET['respon'])){
-  $respon   = (isset($_GET['respon'])) ? $_GET['respon'] : Error::messages('Respon cannot be blannk');
-  $kalimat  = (isset($_GET['kalimat']))? $_GET['kalimat'] : Error::messages('Kalimat cannot be blank');
-  $token    = (isset($_GET['token'])) ? $_GET['token'] : Error::messages('Tokne cannot be blank');
-  //Kalimat dalam bentuk data yang terenskripsi
-  $data = [
-    "status"=>$AI::addResponse($respon,$kalimat,$token)
-  ];
-  echo json_encode($data);
-  die();
-  //var_dump($AI::addResponse('test','test'));
+else if(isset($_GET['response'])){
+  $response = (isset($_GET['response']))? $_GET['response'] : Error::messages('Response cannot be blank');
+  $kalimat = (isset($_GET['kalimat']))? $_GET['kalimat'] : Error::messages('Response cannot be blank');
+  $token    = (isset($_GET['token']))?$_GET['token']:Error::messages('Token cannot be blank');
+  echo $Proses::response($response,$kalimat,$token);
+}
+else {
+  Error::messages('Anda tidak diizinkan mengakses halaman ini');
 }

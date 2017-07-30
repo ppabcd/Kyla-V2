@@ -18,7 +18,7 @@ class Kyla
     $Helper = new Helper;
     $check = self::$con->query(Connection::select('*','token','id_user=2'));
     if($check->num_rows == 0){
-      $token = Helper::random_string();
+      $token = Helper::random();
       $insert = self::$con->query(Connection::insert('token',"'','2','".$token."'"));
       return $token;
     }

@@ -27,4 +27,8 @@ class Connection extends DBConnector
     $data = "UPDATE ".$table." SET ".$update." WHERE ".$where;
     return $data;
   }
+  public static function truncate($table){
+    $data = "TRUNCATE TABLE {$table}";
+    return $data;
+  }
 }

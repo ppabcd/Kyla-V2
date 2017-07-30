@@ -8,6 +8,7 @@ use Main\Token\CheckToken;
 use Main\Kyla\Kyla;
 use Other\Helper;
 use AI\Security;
+use Other\Development;
 /**
  * Proses
  */
@@ -18,16 +19,17 @@ class Proses
   private static $CMD;
   public function __construct(){
     self::$con = Connection::getInstance();
-    self::$AI  = new AI;
     date_default_timezone_set("Asia/Jakarta");
   }
   public static function chat($data,$token){
     $AI = new AI;
     $Messages = new Messages;
     $CheckToken = new CheckToken;
+    $Development = new Development;
     $Helper = new Helper;
     $Security = new Security;
     $Kyla = new Kyla;
+    $Commands = new Commands;
     $user = $CheckToken::token($token,true);
     $chat = trim($data);
     $CMD_ADMIN = self::cmd_admin();
@@ -40,16 +42,51 @@ class Proses
         $method[] = $key->name;
     }
     if(in_array($chat_ex[0],$method)){
-      if(in_array($chat_ex[0],$cmd_admin)){
+      if(in_array($chat_ex[0],$CMD_ADMIN)){
         $Messages::add_chat($chat,$user['id_user']);
       }
       //Mengambil string untuk command
       $Messages::add_chat("Mohon maaf saat ini command sedang tidak berfungsi.",Kyla::KylaToken());
-      $data = [
-        "kalimat" => $Security::encode_kalimat($chat),
-        "status" => 'success'
-      ];
-      //Maintentance
+      //Maintentance Commands
+      $CommandValues = explode($chat_ex[0],$chat);
+      $CommandProses = $Commands::{$chat_ex[0]}($CommandValues,$token);
+      if(is_string($CommandProses)){
+        $Messages::add_chat("Command sudah di proses.",Kyla::KylaToken());
+        $data = [
+          "kalimat" => $CommandProses,
+          "status"=>"success",
+          "Timeout"=>$Development::timer()
+        ];
+        return json_encode($data);
+      }
+      if(is_array($CommandProses)){
+        $Messages::add_chat("Command sudah di proses.",Kyla::KylaToken());
+        return json_encode($CommandProses);
+      }
+      if($CommandProses){
+        $Messages::add_chat("Command sudah di proses.",Kyla::KylaToken());
+        $data = [
+          "kalimat" => '0',
+          "status" => 'success',
+          "timeout"=>$Development::timer()
+        ];
+        //Translate
+
+        //EndTranslate
+        return json_encode($data);
+      }
+      else {
+        $Messages::add_chat("Command gagal di proses.",Kyla::KylaToken());
+        $data = [
+          "kalimat" => '0',
+          "status" => 'success',
+          "timeout"=>$Development::timer()
+        ];
+        //Translate
+
+        //EndTranslate
+        return json_encode($data);
+      }
     }
     else {
       if($Helper::filter_kata($chat)){
@@ -57,14 +94,15 @@ class Proses
         $Messages::add_chat($chat,$token);
         if($ai_chat){
           $ai_chat = $Security::decode_kalimat($ai_chat);
-          $ai_chat = str_replace(array_keys(self::special_word()),array_values(self::special_word()),$ai_chat);
+          $ai_chat = str_replace(array_keys(self::special_word()),array_values(self::special_word($user['username'])),$ai_chat);
           $Messages::add_chat($ai_chat,Kyla::KylaToken());
           //Translate
 
           //End Translate
           $data = [
             "kalimat" => $Security::encode_kalimat($chat),
-            "status" => 'success'
+            "status" => 'success',
+            "timeout" =>$Development::timer()
           ];
         }
         else {
@@ -74,7 +112,8 @@ class Proses
           $Messages::add_chat("Mohon maaf saya tidak mengerti apa yang anda bicarakan. Mohon ajari saya jawabannya dibawah.",Kyla::KylaToken());
           $data = [
             "kalimat" => $Security::encode_kalimat($chat),
-            "status" => 'error'
+            "status" => 'error',
+            "timeout"=>$Development::timer()
           ];
         }
         return json_encode($data);
@@ -86,13 +125,15 @@ class Proses
         $Messages::add_chat("Mohon maaf kata tersebut tidak dapat ditampilkan.",Kyla::KylaToken());
         $data = [
           "kalimat" => '0',
-          "status" => 'success'
+          "status" => 'success',
+          "timeout"=>$Development::timer()
         ];
         return json_encode($data);
       }
     }
   }
   public static function response($respon,$kalimat,$token){
+    $Development = new Development;
     $respon = Helper::input_validation($respon);
     $kalimat = Helper::input_validation($kalimat);
     $AI = new AI;
@@ -109,20 +150,26 @@ class Proses
 
         //End Translate
         $data = [
-          "status" => 'success'
+          "kalimat"=>0,
+          "status" => 'success',
+          "timeout"=>$Development::timer()
         ];
       }
       else {
         $Messages::add_chat('Terdapat kesalahan pada system.',Kyla::KylaToken());
         $data = [
-          "status" => 'success'
+          "kalimat"=>0,
+          "status" => 'success',
+          "timeout"=>$Development::timer()
         ];
       }
     }
     else {
       $Messages::add_chat('Kalimat yang anda masukkan merupakan kalimat yang tidak diperbolehkan.',Kyla::KylaToken());
       $data = [
-        "status" => 'success'
+        "kalimat"=>0,
+        "status" => 'success',
+        "timeout"=>$Development::timer()
       ];
     }
     return json_encode($data);
@@ -137,6 +184,6 @@ class Proses
      ];
   }
   private static function cmd_admin(){
-     return ["testing","system_status","status","clear_all","add_filter"];
+     return ["testing","status","clear_all","add_filter"];
   }
 }
