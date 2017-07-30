@@ -2,7 +2,7 @@
     "name": "ppabcd/kyla_ai",
     "description": "Artificial Intelligence System",
     "type": "project",
-    "license": "MIT",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Reza Juliandri",
