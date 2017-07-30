@@ -1,5 +1,4 @@
-# kyla-v2
-## Kyla AI V.2
+# Kyla AI V.2
 Kyla AI is project Artificial Intelligence. This AI can make you doing something to make things easier.
 ## How To Installation
 For Installation you just using this command
