@@ -12,8 +12,9 @@ const __USER__ = "YOUR USERNAME";
 const __PASS__ = "YOUR PASSWORD";
 const __DB__   = "YOUR DATABASE";
 ```
+After all done, rename example.php to index.php
 ## How To Use
-This Appliaction run with files in Procedural folder. When you run url like this.
+This Application run with files in Procedural folder. When you run url like this.
 `http://localhost/path/test`
 You will run Test.php in Procedural Folder.
 ## Credits
